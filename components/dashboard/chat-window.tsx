@@ -50,7 +50,7 @@ export function ChatWindow({ conversation, messages, className, onSendMessage }:
     }
 
     return (
-        <div className="flex-1 flex flex-col h-full bg-white/50 backdrop-blur-xl relative">
+        <div className="flex-1 flex flex-col h-full bg-white/50 backdrop-blur-xl relative overflow-hidden">
             {/* Header */}
             <div className="h-16 border-b flex items-center justify-between px-6 bg-white/80 backdrop-blur-md sticky top-0 z-10">
                 <div className="flex items-center gap-3">
@@ -120,7 +120,7 @@ export function ChatWindow({ conversation, messages, className, onSendMessage }:
             </div>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 p-6">
+            <ScrollArea className="flex-1 min-h-0 p-6">
                 <div className="max-w-3xl mx-auto">
                     {messages.map((msg) => (
                         <ChatMessage key={msg.id} message={msg} />

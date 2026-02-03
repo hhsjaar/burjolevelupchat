@@ -17,7 +17,7 @@ interface ChatListProps {
 
 export function ChatList({ conversations, selectedId, onSelect }: ChatListProps) {
     return (
-        <div className="w-80 border-r flex flex-col bg-muted/10 h-full">
+        <div className="w-80 border-r flex flex-col bg-muted/10 h-full overflow-hidden">
             <div className="p-4 border-b">
                 <h2 className="text-xl font-bold tracking-tight">Messages</h2>
                 <div className="mt-2 relative">
@@ -27,7 +27,7 @@ export function ChatList({ conversations, selectedId, onSelect }: ChatListProps)
                     />
                 </div>
             </div>
-            <ScrollArea className="flex-1">
+            <ScrollArea className="flex-1 min-h-0">
                 <div className="flex flex-col gap-1 p-2">
                     {conversations.map((chat) => (
                         <button
