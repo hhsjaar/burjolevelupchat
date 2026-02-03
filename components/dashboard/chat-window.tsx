@@ -61,7 +61,7 @@ export function ChatWindow({ conversation, messages, className, onSendMessage, o
                 <div className="flex items-center gap-3">
                     {/* Back Button (Mobile Only) */}
                     <div className="md:hidden mr-1">
-                        <Button variant="ghost" size="icon" className="-ml-2 h-8 w-8" onClick={() => onSendMessage && (props as any).onBack?.()}>
+                        <Button variant="ghost" size="icon" className="-ml-2 h-8 w-8" onClick={() => onBack?.()}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="m15 18-6-6 6-6" /></svg>
                         </Button>
                     </div>
