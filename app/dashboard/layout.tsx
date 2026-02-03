@@ -9,7 +9,7 @@ export default function DashboardLayout({
     return (
         <div className="min-h-screen bg-background flex">
             <NavSidebar />
-            <main className="flex-1 ml-16 h-screen overflow-hidden">
+            <main className="flex-1 md:ml-16 pb-16 md:pb-0 h-screen overflow-hidden">
                 {children}
             </main>
         </div>

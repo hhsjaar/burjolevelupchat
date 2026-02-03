@@ -17,7 +17,11 @@ interface ChatListProps {
 
 export function ChatList({ conversations, selectedId, onSelect }: ChatListProps) {
     return (
-        <div className="w-80 border-r flex flex-col bg-muted/10 h-full overflow-hidden">
+        <div className={cn(
+            "border-r flex flex-col bg-muted/10 h-full overflow-hidden transition-all duration-300",
+            "w-full md:w-80", // Full width on mobile, fixed on desktop
+            selectedId ? "hidden md:flex" : "flex" // Hide on mobile if chat selected
+        )}>
             <div className="p-4 border-b">
                 <h2 className="text-xl font-bold tracking-tight">Messages</h2>
                 <div className="mt-2 relative">

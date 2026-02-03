@@ -101,7 +101,7 @@ export default function ChatPage() {
     }
 
     return (
-        <div className="flex h-full w-full overflow-hidden">
+        <div className="flex h-full w-full overflow-hidden min-h-0">
             <ChatList
                 conversations={conversations}
                 selectedId={selectedId}
@@ -111,6 +111,7 @@ export default function ChatPage() {
                 conversation={selectedConversation}
                 messages={messages}
                 onSendMessage={handleSendMessage}
+                onBack={() => setSelectedId(undefined)}
             />
         </div>
     )

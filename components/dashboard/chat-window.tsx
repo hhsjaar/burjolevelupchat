@@ -10,15 +10,17 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Phone, Video, Info, Paperclip, Send, Bot, UserCog, PowerOff, Sparkles } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
 
 interface ChatWindowProps {
     conversation?: Conversation
     messages: Message[]
     className?: string
     onSendMessage?: (content: string) => void
+    onBack?: () => void
 }
 
-export function ChatWindow({ conversation, messages, className, onSendMessage }: ChatWindowProps) {
+export function ChatWindow({ conversation, messages, className, onSendMessage, onBack }: ChatWindowProps) {
     const [inputText, setInputText] = useState('')
     const scrollRef = React.useRef<HTMLDivElement>(null)
 
@@ -50,10 +52,20 @@ export function ChatWindow({ conversation, messages, className, onSendMessage }:
     }
 
     return (
-        <div className="flex-1 flex flex-col h-full bg-white/50 backdrop-blur-xl relative overflow-hidden">
+        <div className={cn(
+            "flex-1 flex-col h-full bg-white/50 backdrop-blur-xl relative overflow-hidden",
+            conversation ? "flex" : "hidden md:flex" // Hide on mobile if no conversation
+        )}>
             {/* Header */}
-            <div className="h-16 border-b flex items-center justify-between px-6 bg-white/80 backdrop-blur-md sticky top-0 z-10">
+            <div className="h-16 border-b flex items-center justify-between px-4 md:px-6 bg-white/80 backdrop-blur-md sticky top-0 z-10">
                 <div className="flex items-center gap-3">
+                    {/* Back Button (Mobile Only) */}
+                    <div className="md:hidden mr-1">
+                        <Button variant="ghost" size="icon" className="-ml-2 h-8 w-8" onClick={() => onSendMessage && (props as any).onBack?.()}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="m15 18-6-6 6-6" /></svg>
+                        </Button>
+                    </div>
+
                     <Avatar className="h-9 w-9 border">
                         <AvatarImage src={conversation.contact?.profile_pic_url || ''} />
                         <AvatarFallback>{conversation.contact?.push_name?.slice(0, 2).toUpperCase()}</AvatarFallback>
