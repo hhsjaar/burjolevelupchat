@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Contact {
+  id              String         @id @default(uuid()) @db.Uuid
+  wa_id           String         @unique
+  name            String?
+  push_name       String?
+  profile_pic_url String?
+  created_at      DateTime?      @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime?      @default(now()) @db.Timestamptz(6)
+  conversations   Conversation[]
+  reservations    Reservation[]
+
+  @@map("contacts")
+}
+
+model Conversation {
+  id              String    @id @default(uuid()) @db.Uuid
+  contact_id      String    @db.Uuid
+  status          String?   @default("active")
+  last_message_at DateTime? @default(now()) @db.Timestamptz(6)
+  unread_count    Int?      @default(0)
+  ai_mode         Boolean?  @default(true)
+  pinned          Boolean?  @default(false)
+  tags            String[]  @default([])
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  contact         Contact   @relation(fields: [contact_id], references: [id], onDelete: Cascade)
+  messages        Message[]
+
+  @@map("conversations")
+}
+
+model Message {
+  id              String       @id @default(uuid()) @db.Uuid
+  conversation_id String       @db.Uuid
+  sender          String
+  content         String?
+  media_url       String?
+  media_type      String?
+  status          String?      @default("sent")
+  wa_message_id   String?
+  created_at      DateTime?    @default(now()) @db.Timestamptz(6)
+  conversation    Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+model KnowledgeBase {
+  id         String    @id @default(uuid()) @db.Uuid
+  category   String?   @default("general")
+  type       String?   @default("faq") // faq, sop, flow, promo
+  question   String
+  answer     String
+  image_url  String?
+  tags       String[]  @default([])
+  is_active  Boolean?  @default(true)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@map("knowledge_base")
+}
+
+model Asset {
+  id         String    @id @default(uuid()) @db.Uuid
+  name       String
+  url        String
+  type       String?   @default("image")
+  folder     String?   @default("uploads")
+  tags       String[]  @default([])
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@map("assets")
+}
+
+model Reservation {
+  id              String    @id @default(uuid()) @db.Uuid
+  contact_id      String?   @db.Uuid
+  status          String?   @default("pending")
+  start_time      DateTime  @db.Timestamptz(6)
+  end_time        DateTime  @db.Timestamptz(6)
+  details         Json?
+  google_event_id String?
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime? @default(now()) @db.Timestamptz(6)
+  contact         Contact?  @relation(fields: [contact_id], references: [id], onDelete: Cascade)
+  space_id        String?   @db.Uuid
+  space           Space?    @relation(fields: [space_id], references: [id])
+
+  @@map("reservations")
+}
+
+model Space {
+  id            String        @id @default(uuid()) @db.Uuid
+  name          String
+  capacity      Int
+  is_reservable Boolean       @default(true)
+  description   String?
+  reservations  Reservation[]
+  created_at    DateTime?     @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime?     @default(now()) @db.Timestamptz(6)
+
+  @@map("spaces")
+}
