@@ -7,24 +7,36 @@ export async function sendWhatsAppMessage(to: string, text: string) {
         const headers: Record<string, string> = { 'Content-Type': 'application/json' }
         if (WAHA_API_KEY) headers['X-Api-Key'] = WAHA_API_KEY
 
+        // Ensure proper URL formatting (remove trailing slash)
+        const baseUrl = WAHA_URL.replace(/\/$/, '')
+
+        // Smart chatId handling: Only append @c.us if no suffix exists
+        const chatId = to.includes('@') ? to : `${to}@c.us`
+
         const body = {
             session: SESSION_ID,
-            chatId: to.includes('@c.us') ? to : `${to}@c.us`,
-            text: text,
+            chatId,
+            text,
         }
-        console.log('[WAHA] Sending message:', JSON.stringify(body))
+        console.log('[WAHA] Request:', `${baseUrl}/api/sendText`, JSON.stringify(body))
 
-        const res = await fetch(`${WAHA_URL}/api/sendText`, {
+        const res = await fetch(`${baseUrl}/api/sendText`, {
             method: 'POST',
             headers,
             body: JSON.stringify(body),
         })
 
-        const data = await res.json()
-        console.log('[WAHA] Response:', JSON.stringify(data))
-        return data
+        const responseText = await res.text()
+        console.log('[WAHA] Response Status:', res.status)
+        console.log('[WAHA] Response Body:', responseText)
+
+        if (!res.ok) {
+            throw new Error(`WAHA Server Error: ${res.status} ${responseText}`)
+        }
+
+        return JSON.parse(responseText)
     } catch (err) {
-        console.error('Error sending WA message:', err)
+        console.error('[WAHA] Error sending message:', err)
         return null
     }
 }
@@ -34,12 +46,15 @@ export async function sendWhatsAppImage(to: string, imageUrl: string, caption: s
         const headers: Record<string, string> = { 'Content-Type': 'application/json' }
         if (WAHA_API_KEY) headers['X-Api-Key'] = WAHA_API_KEY
 
-        const res = await fetch(`${WAHA_URL}/api/sendImage`, {
+        const baseUrl = WAHA_URL.replace(/\/$/, '')
+        const chatId = to.includes('@') ? to : `${to}@c.us`
+
+        const res = await fetch(`${baseUrl}/api/sendImage`, {
             method: 'POST',
             headers,
             body: JSON.stringify({
                 session: SESSION_ID,
-                chatId: to.includes('@c.us') ? to : `${to}@c.us`,
+                chatId,
                 file: {
                     url: imageUrl
                 },
